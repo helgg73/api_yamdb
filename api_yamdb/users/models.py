@@ -5,6 +5,7 @@ from django.db.models.constraints import CheckConstraint
 
 
 class User(AbstractUser):
+
     USER = 'user'
     ADMIN = 'admin'
     MODERATOR = 'moderator'
@@ -27,9 +28,6 @@ class User(AbstractUser):
         ordering = ('role',)
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        constraints = (
-           CheckConstraint(check=~Q(username=F('me')), name='not_me_name'),
-        )
 
     @property
     def is_moderator(self):
