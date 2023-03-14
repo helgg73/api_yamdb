@@ -9,6 +9,10 @@ SECRET_KEY = 'p&l%385148kslhtyn^##a1)ilz@4zqj=rq&agdol^##zgl9(vs'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Custom user model
+AUTH_USER_MODEL = 'users.User'
+
+# WARNING! Allowed all
 ALLOWED_HOSTS = ['*']
 
 
