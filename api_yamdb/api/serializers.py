@@ -25,3 +25,18 @@ class SignupSerializer(serializers.ModelSerializer):
                 'Пользователь с введенным email уже существует'
             )
         return data
+
+
+class TokenSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        max_length=150,
+        required=True
+    )
+    confirmation_code = serializers.CharField(
+        max_length=150,
+        required=True
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'confirmation_code')
