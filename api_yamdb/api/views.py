@@ -5,10 +5,11 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
-User = get_user_model()
 from .serializers import (
     SignupSerializer,
 )
+
+User = get_user_model()
 
 
 @api_view(['POST'])
@@ -27,4 +28,3 @@ def signup(request):
         fail_silently=False,
     )
     return Response(serializer.data, status=status.HTTP_200_OK)
-

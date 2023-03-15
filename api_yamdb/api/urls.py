@@ -6,4 +6,3 @@ urlpatterns = [
     path('v1/auth/signup/', signup, name="signup")
 
 ]
-

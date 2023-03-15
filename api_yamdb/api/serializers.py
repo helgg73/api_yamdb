@@ -18,7 +18,7 @@ class SignupSerializer(serializers.ModelSerializer):
             )
         if User.objects.filter(username=data.get('username')):
             raise serializers.ValidationError(
-                f'Пользователь с введенным с логином уже существует'
+                'Пользователь с введенным с логином уже существует'
             )
         if User.objects.filter(email=data.get('email')):
             raise serializers.ValidationError(
