@@ -7,18 +7,18 @@ def admin_permissions(user):
 
 
 def staff_permissions(user):
-    """Пользователь админ или суперюзер"""
+    """Пользователь админ, модератор или суперюзер"""
     return (user.is_admin or user.is_moderator or user.is_superuser is True)
 
 
 class AdminOnly(permissions.BasePermission):
     """Доступ для админов и суперпользователя"""
-    def has_object_permission(self, request, view, obj):
+    def has_permission(self, request, view):
         if request.user.is_authenticated:
             return admin_permissions(request.user)
         return False
 
-    def has_permission(self, request, view):
+    def has_object_permission(self, request, view, obj):
         if request.user.is_authenticated:
             return admin_permissions(request.user)
         return False
