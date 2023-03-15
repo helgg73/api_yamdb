@@ -13,7 +13,7 @@ from .serializers import (
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def signup(request, *args, **kwargs):
+def signup(request):
     serializer = SignupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user, created = User.objects.get_or_create(**serializer.validated_data)
