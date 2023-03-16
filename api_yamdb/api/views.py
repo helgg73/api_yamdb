@@ -12,7 +12,7 @@ from .serializers import (
     TokenSerializer,
     CategoriesSerializer
 )
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, mixins
 from titles.models import Categories
 from .permissions import AdminOrReadOnly
 
@@ -56,7 +56,8 @@ def checktoken(request, *args, **kwargs):
                     status=status.HTTP_400_BAD_REQUEST)
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
+                      mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
     permission_classes = (AdminOrReadOnly,)
