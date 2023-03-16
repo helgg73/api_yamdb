@@ -7,10 +7,13 @@ from rest_framework.response import Response
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import AccessToken
 from users.models import User
+
 from .serializers import (
     SignupSerializer,
     TokenSerializer,
 )
+
+User = get_user_model()
 
 
 @api_view(['POST'])
@@ -31,7 +34,6 @@ def signup(request):
     )
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 def get_tokens_for_user(user):
     access_token = AccessToken.for_user(user)
 
@@ -50,3 +52,4 @@ def checktoken(request, *args, **kwargs):
         message = f'{get_tokens_for_user(user)}'
         return Response(message, status=status.HTTP_200_OK)
     return Response('Не верный код подтверждения', status=status.HTTP_400_BAD_REQUEST)
+
