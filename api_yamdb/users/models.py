@@ -3,6 +3,8 @@ from django.db import models
 from django.db.models import Q, F
 from django.db.models.constraints import CheckConstraint
 
+from users.validators import username_validator
+
 
 class User(AbstractUser):
 
@@ -10,19 +12,30 @@ class User(AbstractUser):
     ADMIN = 'admin'
     MODERATOR = 'moderator'
 
-    CHOISES = (
+    ROLE_CHOISES = (
         (ADMIN, 'Администратор'),
         (USER, 'Аутентифицированный пользователь'),
         (MODERATOR, 'Модератор'),
     )
 
+
+    username = models.CharField(
+        'Имя пользователя, username',
+        max_length=150,
+        unique=True,
+        help_text='Имя пользователя',
+        validators=(username_validator,),
+        error_messages={
+            'unique': 'Имя пользователя занято',
+        },
+    )
     email = models.EmailField('Адрес email', unique=True)
     bio = models.TextField(
         'Биография',
         blank=True,
     )
     role = models.CharField('Роль', max_length=20,
-                            choices=CHOISES, default='user')
+                            choices=ROLE_CHOISES, default='user')
 
     class Meta:
         ordering = ('role',)
