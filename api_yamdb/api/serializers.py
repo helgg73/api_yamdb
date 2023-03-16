@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
-User = get_user_model()
+# from django.contrib.auth import get_user_model
+# User = get_user_model()
+from users.models import User
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -25,3 +26,18 @@ class SignupSerializer(serializers.ModelSerializer):
                 'Пользователь с введенным email уже существует'
             )
         return data
+
+
+class TokenSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        max_length=150,
+        required=True
+    )
+    confirmation_code = serializers.CharField(
+        max_length=150,
+        required=True
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'confirmation_code')
