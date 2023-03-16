@@ -1,7 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from datetime import datetime
-from users.models import User
 
 
 class Categories(models.Model):
@@ -74,57 +73,3 @@ class Titles(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
         ordering = ['name']
-
-
-class Reviews(models.Model):
-    title = models.ForeignKey(
-        Titles,
-        verbose_name='Произведение',
-        on_delete=models.CASCADE)
-    text = models.TextField(
-        verbose_name='Текст отзыва')
-    author = models.ForeignKey(
-        User,
-        verbose_name='Автор отзыва',
-        on_delete=models.CASCADE)
-    score = models.IntegerField(
-        validators=[MinValueValidator(1),
-                    MaxValueValidator(10)])
-    pub_date = models.DateTimeField(
-        verbose_name='Дата публикации',
-        auto_now_add=True)
-
-    def __str__(self):
-        return self.text
-
-    class Meta:
-        default_related_name = "reviews"
-        verbose_name = 'Отзыв'
-        verbose_name_plural = 'Отзывы'
-        ordering = ['pub_date']
-
-
-class Сomments(models.Model):
-    reviews = models.ForeignKey(
-        Reviews,
-        verbose_name='Отзыв',
-        on_delete=models.CASCADE)
-    text = models.TextField(
-        verbose_name='Текст комментария',
-        null=True)
-    author = models.ForeignKey(
-        User,
-        verbose_name='Автор отзыва',
-        on_delete=models.CASCADE)
-    pub_date = models.DateTimeField(
-        verbose_name='Дата публикации',
-        auto_now_add=True)
-
-    def __str__(self):
-        return self.text
-
-    class Meta:
-        default_related_name = "comments"
-        verbose_name = 'Комментрий к отзывы'
-        verbose_name_plural = 'Комментарии к отзыву'
-        ordering = ['pub_date']
