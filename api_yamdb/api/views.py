@@ -13,8 +13,6 @@ from .serializers import (
     TokenSerializer,
 )
 
-User = get_user_model()
-
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -36,7 +34,6 @@ def signup(request):
 
 def get_tokens_for_user(user):
     access_token = AccessToken.for_user(user)
-
     return access_token
 
 
@@ -52,4 +49,3 @@ def checktoken(request, *args, **kwargs):
         message = f'{get_tokens_for_user(user)}'
         return Response(message, status=status.HTTP_200_OK)
     return Response('Не верный код подтверждения', status=status.HTTP_400_BAD_REQUEST)
-
