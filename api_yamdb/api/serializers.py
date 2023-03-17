@@ -40,3 +40,18 @@ class CategoriesSerializer(serializers.ModelSerializer):
         model = Categories
         fields = ('name', 'slug')
         lookup_field = 'slug'
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = (
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "bio",
+            "role",
+        )
+        model = User
+
+    def validate_username(self, value):
+        return username_validator(value)
