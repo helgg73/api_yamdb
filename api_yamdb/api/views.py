@@ -5,17 +5,19 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import AccessToken
 from users.models import User
 from .serializers import (
     SignupSerializer,
     TokenSerializer,
-    CategoriesSerializer
+    CategoriesSerializer,
+    UserSerializer
 )
 from rest_framework import viewsets, filters, mixins
 from titles.models import Categories
-from .permissions import AdminOrReadOnly
+from .permissions import AdminOrReadOnly, AdminOnly
 
 
 @api_view(['POST'])
@@ -66,3 +68,10 @@ class CategoryViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = "slug"
+
+class UserViewSet(ModelViewSet):
+    lookup_field = "username"
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    pagination_class = PageNumberPagination
+    permission_classes = (AdminOnly,)
