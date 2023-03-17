@@ -60,6 +60,7 @@ class CategoryViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
                       mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
+    pagination_class = PageNumberPagination
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
