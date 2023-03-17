@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from django.contrib.auth.tokens import default_token_generator
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -22,7 +23,7 @@ from .permissions import AdminOrReadOnly
 def signup(request):
     serializer = SignupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user, created = User.objects.get_or_create(**serializer.validated_data)
+    user, _ = User.objects.get_or_create(**serializer.validated_data)
     confirmation_code = default_token_generator.make_token(user)
     email = user.email
     print(confirmation_code)
