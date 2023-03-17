@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from django.db import IntegrityError
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import api_view, permission_classes, action
@@ -26,7 +27,10 @@ from .permissions import AdminOrReadOnly, AdminOnly
 def signup(request):
     serializer = SignupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user, _ = User.objects.get_or_create(**serializer.validated_data)
+    try:
+        user, _ = User.objects.get_or_create(**serializer.validated_data)
+    except IntegrityError:
+        return Response('Неверное сочетание имени и email', status.HTTP_400_BAD_REQUEST)
     confirmation_code = default_token_generator.make_token(user)
     email = user.email
     print(confirmation_code)
@@ -74,6 +78,7 @@ class UserViewSet(ModelViewSet):
     lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
     pagination_class = PageNumberPagination
     permission_classes = (AdminOnly,)

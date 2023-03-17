@@ -3,7 +3,7 @@ from rest_framework import serializers
 from users.models import User
 from titles.models import Categories
 from users.validators import username_validator
-from api.validators import validate_email
+
 
 class SignupSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
@@ -13,8 +13,7 @@ class SignupSerializer(serializers.ModelSerializer):
     )
     email = serializers.EmailField(
         max_length=254,
-        allow_blank=False,
-        validators=(validate_email,)
+        allow_blank=False
         )
 
     class Meta:
