@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django.core.mail import send_mail
@@ -13,7 +13,8 @@ from .serializers import (
     SignupSerializer,
     TokenSerializer,
     CategoriesSerializer,
-    UserSerializer
+    UserSerializer,
+    UserEditSerializer
 )
 from rest_framework import viewsets, filters, mixins
 from titles.models import Categories
@@ -67,11 +68,31 @@ class CategoryViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
-    lookup_field = "slug"
+    lookup_field = 'slug'
 
 class UserViewSet(ModelViewSet):
-    lookup_field = "username"
+    lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    search_fields = ('username',)
     pagination_class = PageNumberPagination
     permission_classes = (AdminOnly,)
+
+    @action(
+        methods=('get', 'patch'),
+        detail=False,
+        url_path='me',
+        permission_classes=(IsAuthenticated,),
+        serializer_class=UserEditSerializer,
+    )
+    def users_own_profile(self, request):
+        user = request.user
+        if request.method == 'PATCH':
+            serializer = self.get_serializer(
+                user, data=request.data, partial=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        else:
+            serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)

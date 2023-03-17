@@ -3,6 +3,7 @@ from rest_framework import serializers
 from users.models import User
 from titles.models import Categories
 from users.validators import username_validator
+from api.validators import validate_email
 
 class SignupSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
@@ -10,7 +11,11 @@ class SignupSerializer(serializers.ModelSerializer):
         required=True,
         validators=(username_validator,),
     )
-    email = serializers.EmailField(max_length=254, allow_blank=False)
+    email = serializers.EmailField(
+        max_length=254,
+        allow_blank=False,
+        validators=(validate_email,)
+        )
 
     class Meta:
         model = User
@@ -55,3 +60,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         return username_validator(value)
+
+
+class UserEditSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        read_only_fields = ("role",)
