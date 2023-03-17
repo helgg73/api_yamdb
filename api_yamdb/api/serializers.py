@@ -2,6 +2,7 @@ from rest_framework import serializers
 # from django.contrib.auth import get_user_model
 # User = get_user_model()
 from users.models import User
+from titles.models import Categories
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -41,3 +42,11 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'confirmation_code')
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Categories
+        fields = ('name', 'slug')
+        lookup_field = 'slug'
