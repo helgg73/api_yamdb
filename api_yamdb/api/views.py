@@ -14,12 +14,16 @@ from .serializers import (
     SignupSerializer,
     TokenSerializer,
     CategoriesSerializer,
+    TitlesSerializer,
     UserSerializer,
     UserEditSerializer
 )
 from rest_framework import viewsets, filters, mixins
-from titles.models import Categories
+from titles.models import Categories, Titles
+from reviews.models import Reviews
 from .permissions import AdminOrReadOnly, AdminOnly
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Avg
 
 
 @api_view(['POST'])
@@ -30,7 +34,8 @@ def signup(request):
     try:
         user, _ = User.objects.get_or_create(**serializer.validated_data)
     except IntegrityError:
-        return Response('Неверное сочетание имени и email', status.HTTP_400_BAD_REQUEST)
+        return Response('Неверное сочетание имени и email',
+                        status.HTTP_400_BAD_REQUEST)
     confirmation_code = default_token_generator.make_token(user)
     email = user.email
     print(confirmation_code)
@@ -73,6 +78,16 @@ class CategoryViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
+
+
+class TitlesViewSet(ModelViewSet):
+    queryset = Titles.objects.annotate(rating=Avg('score'))
+    serializer_class = TitlesSerializer
+    pagination_class = PageNumberPagination
+    permission_classes = (AdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend)
+    filterset_fields = ('category', 'genre', 'name', 'year')
+
 
 class UserViewSet(ModelViewSet):
     lookup_field = 'username'
