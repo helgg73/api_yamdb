@@ -18,13 +18,14 @@ from .serializers import (
     TitlesSerializer,
     UserSerializer,
     UserEditSerializer,
-    ReadOnlyTitleSerializer
+    ReadOnlyTitleSerializer,
+    ReviewSerializer
 )
 from rest_framework import viewsets, filters, mixins
 
 from titles.models import Categories, Titles, Genres
 from reviews.models import Reviews
-from .permissions import AdminOrReadOnly, AdminOnly
+from .permissions import AdminOrReadOnly, AdminOnly, IsAuthorOrStaffOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
 
@@ -137,3 +138,17 @@ class UserViewSet(ModelViewSet):
         else:
             serializer = self.get_serializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthorOrStaffOrReadOnly,)
+    serializer_class = ReviewSerializer
+
+    def get_title(self):
+        return get_object_or_404(Titles, id=self.kwargs.get('title_id'))
+
+    def get_queryset(self):
+        return self.get_title().reviews.select_related('author')
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user, title=self.get_title())

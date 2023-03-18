@@ -1,8 +1,11 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from users.models import User
 from titles.models import Categories, Titles, Genres
 from users.validators import username_validator
+from reviews.models import Reviews
+from reviews.validators import score_validator
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -98,3 +101,29 @@ class UserSerializer(serializers.ModelSerializer):
 class UserEditSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         read_only_fields = ("role",)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True,
+        default=serializers.CurrentUserDefault(),
+    )
+    title = serializers.SlugRelatedField(
+        slug_field='name',
+        read_only=True
+    )
+    score = serializers.IntegerField(
+        validators=(score_validator,)
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Reviews
+        validators = (
+            UniqueTogetherValidator(
+                queryset=Reviews.objects.all(),
+                message = 'Можно оставить только один отзыв',
+                fields=('author', 'title')
+            ),
+        )

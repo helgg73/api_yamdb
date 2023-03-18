@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 from titles.models import Titles
+from reviews.validators import score_validator
 
 SCORE_CHOICES = (
     (1, '1. Неудовлетворительно'),
@@ -28,7 +29,9 @@ class Reviews(models.Model):
         on_delete=models.CASCADE)
     score = models.SmallIntegerField(
         choices=SCORE_CHOICES,
-        verbose_name='Оценка произведения')
+        validators=(score_validator,),
+        verbose_name='Оценка произведения',
+        )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
         auto_now_add=True)
@@ -41,7 +44,11 @@ class Reviews(models.Model):
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
         ordering = ['pub_date']
-
+        constraints = [
+            models.UniqueConstraint(
+                fields=("title", "author"), name="unique_review"
+            ),
+        ]
 
 class Сomments(models.Model):
     reviews = models.ForeignKey(
