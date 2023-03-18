@@ -89,6 +89,7 @@ class GenreViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
 
 
 class UserViewSet(ModelViewSet):
+    http_method_names = ['get', 'post', 'patch', 'delete']
     lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
