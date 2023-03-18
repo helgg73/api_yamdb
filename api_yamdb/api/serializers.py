@@ -4,9 +4,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 
 from users.models import User
-from titles.models import Categories, Titles, Genres
 from users.validators import username_validator
-from reviews.models import Reviews
+from reviews.models import Review, Category, Title, Genre
 from reviews.validators import score_validator
 
 
@@ -42,10 +41,10 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = ('username', 'confirmation_code')
 
 
-class CategoriesSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Categories
+        model = Category
         fields = ('name', 'slug')
         lookup_field = 'slug'
 
@@ -54,32 +53,32 @@ class CategoriesSerializer(serializers.ModelSerializer):
 class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Genres
+        model = Genre
         fields = ('name', 'slug')
 
 
 class ReadOnlyTitleSerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
     genre = GenreSerializer(many=True)
-    category = CategoriesSerializer()
+    category = CategorySerializer()
 
     class Meta:
-        model = Titles
+        model = Title
         fields = (
             'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
         )
 
 class TitlesSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
-        slug_field='slug', many=True, queryset=Genres.objects.all()
+        slug_field='slug', many=True, queryset=Genre.objects.all()
     )
     category = serializers.SlugRelatedField(
-        slug_field='slug', queryset=Categories.objects.all()
+        slug_field='slug', queryset=Category.objects.all()
     )
     rating = serializers.IntegerField(read_only=True)
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category')
         lookup_field = 'slug'
 
@@ -121,11 +120,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         if request.method == "POST":
             author = request.user
             title_id = self.context["view"].kwargs.get("title_id")
-            title = get_object_or_404(Titles, pk=title_id)
-            if Reviews.objects.filter(title=title, author=author).exists():
+            title = get_object_or_404(Title, pk=title_id)
+            if Review.objects.filter(title=title, author=author).exists():
                 raise ValidationError("На произведение разрешен один отзыв")
         return data
 
     class Meta:
         fields = ("id", "text", "author", "score", "pub_date")
-        model = Reviews
+        model = Review

@@ -1,6 +1,15 @@
 from django.contrib import admin
 
-from .models import Reviews, Сomments
+from .models import (
+    Review,
+    Сomment,
+    Category,
+    Genre,
+    Title
+)
 
-admin.site.register(Reviews)
-admin.site.register(Сomments)
+admin.site.register(Category)
+admin.site.register(Genre)
+admin.site.register(Title)
+admin.site.register(Review)
+admin.site.register(Сomment)
