@@ -14,12 +14,14 @@ from .serializers import (
     SignupSerializer,
     TokenSerializer,
     CategoriesSerializer,
+    GenreSerializer,
     TitlesSerializer,
     UserSerializer,
     UserEditSerializer
 )
 from rest_framework import viewsets, filters, mixins
-from titles.models import Categories, Titles
+
+from titles.models import Categories, Titles, Genres
 from reviews.models import Reviews
 from .permissions import AdminOrReadOnly, AdminOnly
 from django_filters.rest_framework import DjangoFilterBackend
@@ -80,6 +82,17 @@ class CategoryViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
     lookup_field = 'slug'
 
 
+class GenreViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
+                   mixins.CreateModelMixin, viewsets.GenericViewSet):
+    queryset = Genres.objects.all()
+    serializer_class = GenreSerializer
+    pagination_class = PageNumberPagination
+    permission_classes = (AdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
+
 class TitlesViewSet(ModelViewSet):
     queryset = Titles.objects.annotate(rating=Avg('score'))
     serializer_class = TitlesSerializer
@@ -90,6 +103,7 @@ class TitlesViewSet(ModelViewSet):
 
 
 class UserViewSet(ModelViewSet):
+    http_method_names = ['get', 'post', 'patch', 'delete']
     lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
