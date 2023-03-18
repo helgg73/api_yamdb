@@ -17,7 +17,8 @@ from .serializers import (
     GenreSerializer,
     TitlesSerializer,
     UserSerializer,
-    UserEditSerializer
+    UserEditSerializer,
+    ReadOnlyTitleSerializer
 )
 from rest_framework import viewsets, filters, mixins
 
@@ -94,12 +95,18 @@ class GenreViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
 
 
 class TitlesViewSet(ModelViewSet):
-    queryset = Titles.objects.annotate(rating=Avg('score'))
+    queryset = Titles.objects.annotate(rating=Avg('reviews__score'))
     serializer_class = TitlesSerializer
     pagination_class = PageNumberPagination
     permission_classes = (AdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend)
-    filterset_fields = ('category', 'genre', 'name', 'year')
+#    filter_backends = (DjangoFilterBackend)
+#    filterset_fields = ('category', 'genre', 'name', 'year')
+
+    def get_serializer_class(self):
+        if self.action in ("retrieve", "list"):
+            return ReadOnlyTitleSerializer
+        return TitlesSerializer
+
 
 
 class UserViewSet(ModelViewSet):
