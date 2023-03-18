@@ -15,12 +15,17 @@ from .serializers import (
     TokenSerializer,
     CategoriesSerializer,
     GenreSerializer,
+    TitlesSerializer,
     UserSerializer,
     UserEditSerializer
 )
 from rest_framework import viewsets, filters, mixins
-from titles.models import Categories, Genres
+
+from titles.models import Categories, Titles, Genres
+from reviews.models import Reviews
 from .permissions import AdminOrReadOnly, AdminOnly
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Avg
 
 
 @api_view(['POST'])
@@ -86,6 +91,15 @@ class GenreViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
+
+
+class TitlesViewSet(ModelViewSet):
+    queryset = Titles.objects.annotate(rating=Avg('score'))
+    serializer_class = TitlesSerializer
+    pagination_class = PageNumberPagination
+    permission_classes = (AdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend)
+    filterset_fields = ('category', 'genre', 'name', 'year')
 
 
 class UserViewSet(ModelViewSet):

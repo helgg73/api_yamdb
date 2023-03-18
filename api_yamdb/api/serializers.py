@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from users.models import User
-from titles.models import Categories, Genres
+from titles.models import Categories, Titles, Genres
 from users.validators import username_validator
 
 
@@ -45,11 +45,26 @@ class CategoriesSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
+
 class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genres
         fields = ('name', 'slug')
+
+
+class TitlesSerializer(serializers.ModelSerializer):
+    genre = serializers.SlugRelatedField(
+        slug_field='slug', many=True, queryset=Genres.objects.all()
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='slug', queryset=Categories.objects.all()
+    )
+
+    class Meta:
+        model = Titles
+        fields = ('name', 'year', 'rating', 'description', 'genre', 'category')
+
         lookup_field = 'slug'
 
 
