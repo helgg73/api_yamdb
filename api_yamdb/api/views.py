@@ -13,7 +13,7 @@ from users.models import User
 from .serializers import (
     SignupSerializer,
     TokenSerializer,
-    CategoriesSerializer,
+    CategorySerializer,
     GenreSerializer,
     TitlesSerializer,
     UserSerializer,
@@ -23,8 +23,7 @@ from .serializers import (
 )
 from rest_framework import viewsets, filters, mixins
 
-from titles.models import Categories, Titles, Genres
-from reviews.models import Reviews
+from reviews.models import Review, Category, Title, Genre
 from .permissions import AdminOrReadOnly, AdminOnly, IsAuthorOrStaffOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
@@ -75,8 +74,8 @@ def checktoken(request, *args, **kwargs):
 
 class CategoryViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
                       mixins.CreateModelMixin, viewsets.GenericViewSet):
-    queryset = Categories.objects.all()
-    serializer_class = CategoriesSerializer
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
     pagination_class = PageNumberPagination
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
@@ -86,7 +85,7 @@ class CategoryViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
 
 class GenreViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
                    mixins.CreateModelMixin, viewsets.GenericViewSet):
-    queryset = Genres.objects.all()
+    queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     pagination_class = PageNumberPagination
     permission_classes = (AdminOrReadOnly,)
@@ -95,8 +94,8 @@ class GenreViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
     lookup_field = 'slug'
 
 
-class TitlesViewSet(ModelViewSet):
-    queryset = Titles.objects.annotate(rating=Avg('reviews__score'))
+class TitleViewSet(ModelViewSet):
+    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
     serializer_class = TitlesSerializer
     pagination_class = PageNumberPagination
     permission_classes = (AdminOrReadOnly,)
@@ -145,7 +144,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
 
     def get_title(self):
-        return get_object_or_404(Titles, id=self.kwargs.get('title_id'))
+        return get_object_or_404(Title, id=self.kwargs.get('title_id'))
 
     def get_queryset(self):
         return self.get_title().reviews.select_related('author')
