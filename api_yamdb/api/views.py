@@ -17,7 +17,8 @@ from .serializers import (
     GenreSerializer,
     TitlesSerializer,
     UserSerializer,
-    UserEditSerializer
+    UserEditSerializer,
+    ReadOnlyTitleSerializer
 )
 from rest_framework import viewsets, filters, mixins
 
@@ -100,6 +101,12 @@ class TitlesViewSet(ModelViewSet):
     permission_classes = (AdminOrReadOnly,)
 #    filter_backends = (DjangoFilterBackend)
 #    filterset_fields = ('category', 'genre', 'name', 'year')
+
+    def get_serializer_class(self):
+        if self.action in ("retrieve", "list"):
+            return ReadOnlyTitleSerializer
+        return TitlesSerializer
+
 
 
 class UserViewSet(ModelViewSet):
