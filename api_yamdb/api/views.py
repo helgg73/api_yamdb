@@ -14,11 +14,12 @@ from .serializers import (
     SignupSerializer,
     TokenSerializer,
     CategoriesSerializer,
+    GenreSerializer,
     UserSerializer,
     UserEditSerializer
 )
 from rest_framework import viewsets, filters, mixins
-from titles.models import Categories
+from titles.models import Categories, Genres
 from .permissions import AdminOrReadOnly, AdminOnly
 
 
@@ -30,7 +31,8 @@ def signup(request):
     try:
         user, _ = User.objects.get_or_create(**serializer.validated_data)
     except IntegrityError:
-        return Response('Неверное сочетание имени и email', status.HTTP_400_BAD_REQUEST)
+        return Response('Неверное сочетание имени и email',
+                        status.HTTP_400_BAD_REQUEST)
     confirmation_code = default_token_generator.make_token(user)
     email = user.email
     print(confirmation_code)
@@ -73,6 +75,18 @@ class CategoryViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
+
+
+class GenreViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
+                   mixins.CreateModelMixin, viewsets.GenericViewSet):
+    queryset = Genres.objects.all()
+    serializer_class = GenreSerializer
+    pagination_class = PageNumberPagination
+    permission_classes = (AdminOrReadOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+
 
 class UserViewSet(ModelViewSet):
     lookup_field = 'username'
