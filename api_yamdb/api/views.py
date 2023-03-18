@@ -94,12 +94,12 @@ class GenreViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
 
 
 class TitlesViewSet(ModelViewSet):
-    queryset = Titles.objects.annotate(rating=Avg('score'))
+    queryset = Titles.objects.annotate(rating=Avg('reviews__score'))
     serializer_class = TitlesSerializer
     pagination_class = PageNumberPagination
     permission_classes = (AdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend)
-    filterset_fields = ('category', 'genre', 'name', 'year')
+#    filter_backends = (DjangoFilterBackend)
+#    filterset_fields = ('category', 'genre', 'name', 'year')
 
 
 class UserViewSet(ModelViewSet):

@@ -60,6 +60,7 @@ class TitlesSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         slug_field='slug', queryset=Categories.objects.all()
     )
+    rating = serializers.IntegerField()
 
     class Meta:
         model = Titles
