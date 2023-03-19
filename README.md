@@ -82,6 +82,7 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 6) Вы можете импортировать тестовую базу данных из файлов csv:
+
 Импорт пользователей:
 ```
 python manage.py user_import_csv
