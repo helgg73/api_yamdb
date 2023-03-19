@@ -99,5 +99,5 @@ python manage.py user_import_csv
 ```
 2) Импорт данных Ревью:
 ```
-python3.9 manage.py reviews_import_csv
+python manage.py reviews_import_csv
 ```
