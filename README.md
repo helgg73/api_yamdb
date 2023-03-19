@@ -90,3 +90,14 @@ python manage.py runserver
 __________________________________
 Ваш проект запустился на http://localhost:8000/
 Полная документация доступна по адресу http://localhost:8000/redoc/
+
+
+## Импорт данных из csv файла:
+1) Импорт пользователей:
+```
+python manage.py user_import_csv
+```
+2) Импорт данных Ревью:
+```
+python3.9 manage.py reviews_import_csv
+```
