@@ -27,7 +27,7 @@ from reviews.models import Review, Category, Title, Genre
 from .permissions import AdminOrReadOnly, AdminOnly, IsAuthorOrStaffOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
-
+from .filters import TitlesFilter
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -99,8 +99,8 @@ class TitleViewSet(ModelViewSet):
     serializer_class = TitlesSerializer
     pagination_class = PageNumberPagination
     permission_classes = (AdminOrReadOnly,)
-#    filter_backends = (DjangoFilterBackend)
-#    filterset_fields = ('category', 'genre', 'name', 'year')
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitlesFilter
 
     def get_serializer_class(self):
         if self.action in ("retrieve", "list"):
