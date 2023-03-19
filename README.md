@@ -81,7 +81,15 @@ python manage.py migrate
 ```
 python manage.py createsuperuser
 ```
-6) Вы можете импортировать тестовую базу данных:
+6) Вы можете импортировать тестовую базу данных из файлов csv:
+Импорт пользователей:
+```
+python manage.py user_import_csv
+```
+Импорт данных Ревью:
+```
+python manage.py reviews_import_csv
+```
 
 7) Запустите проект:
 ```
@@ -90,14 +98,3 @@ python manage.py runserver
 __________________________________
 Ваш проект запустился на http://localhost:8000/
 Полная документация доступна по адресу http://localhost:8000/redoc/
-
-
-## Импорт данных из csv файла:
-1) Импорт пользователей:
-```
-python manage.py user_import_csv
-```
-2) Импорт данных Ревью:
-```
-python manage.py reviews_import_csv
-```
