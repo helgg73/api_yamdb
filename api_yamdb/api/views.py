@@ -19,7 +19,8 @@ from .serializers import (
     UserSerializer,
     UserEditSerializer,
     ReadOnlyTitleSerializer,
-    ReviewSerializer
+    ReviewSerializer,
+    CommentSerializer
 )
 from rest_framework import viewsets, filters, mixins
 
@@ -95,7 +96,7 @@ class GenreViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
 
 
 class TitleViewSet(ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
+    queryset = Title.objects.annotate(rating=Avg('reviews__score')).order_by('name')
     serializer_class = TitlesSerializer
     pagination_class = PageNumberPagination
     permission_classes = (AdminOrReadOnly,)
@@ -142,6 +143,7 @@ class UserViewSet(ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrStaffOrReadOnly,)
     serializer_class = ReviewSerializer
+    pagination_class = PageNumberPagination
 
     def get_title(self):
         return get_object_or_404(Title, id=self.kwargs.get('title_id'))
@@ -151,3 +153,19 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, title=self.get_title())
+
+
+class CommentViewSet(ModelViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = (IsAuthorOrStaffOrReadOnly,)
+    pagination_class = PageNumberPagination
+
+    def get_review(self):
+        return get_object_or_404(Review, id=self.kwargs.get("review_id"))
+
+    def get_queryset(self):
+        return self.get_review().comments.select_related("author")
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user, review=self.get_review())
+

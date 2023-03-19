@@ -142,14 +142,13 @@ class Review(models.Model):
             ),
         ]
 
-class Сomment(models.Model):
-    reviews = models.ForeignKey(
+class Comment(models.Model):
+    review = models.ForeignKey(
         Review,
         verbose_name='Отзыв',
         on_delete=models.CASCADE)
     text = models.TextField(
-        verbose_name='Текст комментария',
-        null=True)
+        verbose_name='Текст комментария')
     author = models.ForeignKey(
         User,
         verbose_name='Автор отзыва',

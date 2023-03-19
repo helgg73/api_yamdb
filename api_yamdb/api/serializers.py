@@ -5,7 +5,7 @@ from rest_framework.generics import get_object_or_404
 
 from users.models import User
 from users.validators import username_validator
-from reviews.models import Review, Category, Title, Genre
+from reviews.models import Review, Category, Title, Genre, Comment
 from reviews.validators import score_validator
 
 
@@ -105,7 +105,6 @@ class UserEditSerializer(UserSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    requires_context = True
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
@@ -128,3 +127,11 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ("id", "text", "author", "score", "pub_date")
         model = Review
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(read_only=True, slug_field="username")
+
+    class Meta:
+        fields = ("id", "text", "author", "pub_date")
+        model = Comment
