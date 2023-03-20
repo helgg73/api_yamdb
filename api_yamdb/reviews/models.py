@@ -1,8 +1,9 @@
-from django.db import models
-from users.models import User
-from reviews.validators import score_validator
-from django.core.validators import MaxValueValidator, MinValueValidator
 from datetime import datetime
+
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from reviews.validators import score_validator
+from users.models import User
 
 SCORE_CHOICES = (
     (1, '1. Неудовлетворительно'),

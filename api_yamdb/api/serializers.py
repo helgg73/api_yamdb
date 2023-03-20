@@ -1,11 +1,10 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-
+from reviews.models import Category, Comment, Genre, Review, Title
+from reviews.validators import score_validator
 from users.models import User
 from users.validators import username_validator
-from reviews.models import Review, Category, Title, Genre, Comment
-from reviews.validators import score_validator
 
 
 class SignupSerializer(serializers.ModelSerializer):
