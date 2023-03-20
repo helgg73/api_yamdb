@@ -1,8 +1,9 @@
-from django.db import models
-from users.models import User
-from reviews.validators import score_validator
-from django.core.validators import MaxValueValidator, MinValueValidator
 from datetime import datetime
+
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from reviews.validators import score_validator
+from users.models import User
 
 SCORE_CHOICES = (
     (1, '1. Неудовлетворительно'),
@@ -99,7 +100,7 @@ class GenreTitle(models.Model):
         Genre,
         verbose_name='Жанр',
         on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return f'{self.title}, жанр - {self.genre}'
 
@@ -123,7 +124,7 @@ class Review(models.Model):
         choices=SCORE_CHOICES,
         validators=(score_validator,),
         verbose_name='Оценка произведения',
-        )
+    )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
         auto_now_add=True)
@@ -141,6 +142,7 @@ class Review(models.Model):
                 fields=("title", "author"), name="unique_review"
             ),
         ]
+
 
 class Comment(models.Model):
     review = models.ForeignKey(

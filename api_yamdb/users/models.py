@@ -1,8 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import Q, F
-from django.db.models.constraints import CheckConstraint
-
 from users.validators import username_validator
 
 
@@ -17,7 +14,6 @@ class User(AbstractUser):
         (USER, 'Аутентифицированный пользователь'),
         (MODERATOR, 'Модератор'),
     )
-
 
     username = models.CharField(
         'Имя пользователя, username',

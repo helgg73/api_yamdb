@@ -1,34 +1,26 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import status
-from django.db import IntegrityError
 from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.db import IntegrityError
+from django.db.models import Avg
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import AccessToken
+from reviews.models import Category, Genre, Review, Title
 from users.models import User
-from .serializers import (
-    SignupSerializer,
-    TokenSerializer,
-    CategorySerializer,
-    GenreSerializer,
-    TitlesSerializer,
-    UserSerializer,
-    UserEditSerializer,
-    ReadOnlyTitleSerializer,
-    ReviewSerializer,
-    CommentSerializer
-)
-from rest_framework import viewsets, filters, mixins
 
-from reviews.models import Review, Category, Title, Genre
-from .permissions import AdminOrReadOnly, AdminOnly, IsAuthorOrStaffOrReadOnly
-from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Avg
 from .filters import TitlesFilter
+from .permissions import AdminOnly, AdminOrReadOnly, IsAuthorOrStaffOrReadOnly
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, ReadOnlyTitleSerializer,
+                          ReviewSerializer, SignupSerializer, TitlesSerializer,
+                          TokenSerializer, UserEditSerializer, UserSerializer)
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -96,7 +88,9 @@ class GenreViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
 
 
 class TitleViewSet(ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('reviews__score')).order_by('name')
+    queryset = (
+        Title.objects.annotate(rating=Avg('reviews__score')).order_by('name')
+    )
     serializer_class = TitlesSerializer
     pagination_class = PageNumberPagination
     permission_classes = (AdminOrReadOnly,)
@@ -107,7 +101,6 @@ class TitleViewSet(ModelViewSet):
         if self.action in ("retrieve", "list"):
             return ReadOnlyTitleSerializer
         return TitlesSerializer
-
 
 
 class UserViewSet(ModelViewSet):
@@ -168,4 +161,3 @@ class CommentViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, review=self.get_review())
-

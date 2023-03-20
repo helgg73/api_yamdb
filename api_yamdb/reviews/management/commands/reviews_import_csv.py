@@ -1,14 +1,7 @@
 import csv
-from django.core.management import BaseCommand
-from reviews.models import (
-    Category,
-    Genre,
-    Title,
-    Comment,
-    Review,
-    GenreTitle,
-)
 
+from django.core.management import BaseCommand
+from reviews.models import Category, Comment, Genre, GenreTitle, Review, Title
 
 FILES = {
     Category: 'category.csv',
@@ -27,4 +20,6 @@ class Command(BaseCommand):
         for model, file_csv in FILES.items():
             with open(f'static/data/{file_csv}') as file:
                 reader_object = csv.DictReader(file)
-                model.objects.bulk_create(model(**data) for data in reader_object)
+                model.objects.bulk_create(
+                    model(**data) for data in reader_object
+                )
