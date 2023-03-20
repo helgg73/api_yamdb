@@ -12,8 +12,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Review, Title
-from users.models import User
 
+from users.models import User
 from .filters import TitlesFilter
 from .permissions import AdminOnly, AdminOrReadOnly, IsAuthorOrStaffOrReadOnly
 from .serializers import (CategorySerializer, CommentSerializer,
@@ -98,7 +98,7 @@ class TitleViewSet(ModelViewSet):
     filterset_class = TitlesFilter
 
     def get_serializer_class(self):
-        if self.action in ("retrieve", "list"):
+        if self.action in ('retrieve', 'list'):
             return ReadOnlyTitleSerializer
         return TitlesSerializer
 
@@ -154,10 +154,10 @@ class CommentViewSet(ModelViewSet):
     pagination_class = PageNumberPagination
 
     def get_review(self):
-        return get_object_or_404(Review, id=self.kwargs.get("review_id"))
+        return get_object_or_404(Review, id=self.kwargs.get('review_id'))
 
     def get_queryset(self):
-        return self.get_review().comments.select_related("author")
+        return self.get_review().comments.select_related('author')
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, review=self.get_review())
