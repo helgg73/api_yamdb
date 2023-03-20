@@ -1,9 +1,6 @@
-from datetime import datetime
-
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from reviews.validators import score_validator
+from reviews.validators import score_validator, year_validator
 from users.models import User
 
 SCORE_CHOICES = (
@@ -79,8 +76,7 @@ class Title(models.Model):
     year = models.IntegerField(
         verbose_name='Дата выпуска',
         db_index=True,
-        validators=[MinValueValidator(0),
-                    MaxValueValidator(datetime.now().year)])
+        validators=(year_validator,))
 
     def __str__(self):
         return self.name
