@@ -30,6 +30,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
 from .filters import TitlesFilter
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signup(request):
@@ -96,7 +97,9 @@ class GenreViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
 
 
 class TitleViewSet(ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('reviews__score')).order_by('name')
+    queryset = (
+        Title.objects.annotate(rating=Avg('reviews__score')).order_by('name')
+    )
     serializer_class = TitlesSerializer
     pagination_class = PageNumberPagination
     permission_classes = (AdminOrReadOnly,)
@@ -107,7 +110,6 @@ class TitleViewSet(ModelViewSet):
         if self.action in ("retrieve", "list"):
             return ReadOnlyTitleSerializer
         return TitlesSerializer
-
 
 
 class UserViewSet(ModelViewSet):
@@ -168,4 +170,3 @@ class CommentViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, review=self.get_review())
-

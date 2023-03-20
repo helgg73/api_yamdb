@@ -27,4 +27,6 @@ class Command(BaseCommand):
         for model, file_csv in FILES.items():
             with open(f'static/data/{file_csv}') as file:
                 reader_object = csv.DictReader(file)
-                model.objects.bulk_create(model(**data) for data in reader_object)
+                model.objects.bulk_create(
+                    model(**data) for data in reader_object
+                )

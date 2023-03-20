@@ -14,7 +14,7 @@ def staff_permissions(user):
 class AdminOnly(permissions.BasePermission):
     """Доступ для админов и суперпользователя"""
     message = 'Отказано в доступе'
-    
+
     def has_permission(self, request, view):
         if request.user.is_authenticated:
             return admin_permissions(request.user)

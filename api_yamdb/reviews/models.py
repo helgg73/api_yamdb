@@ -99,7 +99,7 @@ class GenreTitle(models.Model):
         Genre,
         verbose_name='Жанр',
         on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return f'{self.title}, жанр - {self.genre}'
 
@@ -123,7 +123,7 @@ class Review(models.Model):
         choices=SCORE_CHOICES,
         validators=(score_validator,),
         verbose_name='Оценка произведения',
-        )
+    )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
         auto_now_add=True)
@@ -141,6 +141,7 @@ class Review(models.Model):
                 fields=("title", "author"), name="unique_review"
             ),
         ]
+
 
 class Comment(models.Model):
     review = models.ForeignKey(
