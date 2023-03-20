@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
 from reviews.validators import score_validator
 from users.models import User
 
@@ -85,7 +86,7 @@ class Title(models.Model):
         return self.name
 
     class Meta:
-        default_related_name = "titles"
+        default_related_name = 'titles'
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
         ordering = ['name']
@@ -133,13 +134,13 @@ class Review(models.Model):
         return self.text
 
     class Meta:
-        default_related_name = "reviews"
+        default_related_name = 'reviews'
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
         ordering = ['pub_date']
         constraints = [
             models.UniqueConstraint(
-                fields=("title", "author"), name="unique_review"
+                fields=('title', 'author'), name='unique_review'
             ),
         ]
 
@@ -163,7 +164,7 @@ class Comment(models.Model):
         return self.text
 
     class Meta:
-        default_related_name = "comments"
+        default_related_name = 'comments'
         verbose_name = 'Комментрий к отзывы'
         verbose_name_plural = 'Комментарии к отзыву'
         ordering = ['pub_date']
