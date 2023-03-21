@@ -5,14 +5,14 @@ from reviews.models import Category, Comment, Genre, Review, Title
 from reviews.validators import score_validator
 
 from users.models import User
-from users.validators import username_validator
+from users.validators import validate_username
 
 
 class SignupSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
         max_length=150,
         required=True,
-        validators=(username_validator,),
+        validators=(validate_username,),
     )
     email = serializers.EmailField(
         max_length=254,
@@ -97,7 +97,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
 
     def validate_username(self, value):
-        return username_validator(value)
+        return validate_username(value)
 
 
 class UserEditSerializer(UserSerializer):
@@ -111,9 +111,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True,
         default=serializers.CurrentUserDefault(),
     )
-    score = serializers.IntegerField(
+    """ score = serializers.IntegerField(
         validators=(score_validator,)
-    )
+    ) """
 
     def validate(self, data):
         request = self.context['request']
