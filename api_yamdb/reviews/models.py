@@ -2,18 +2,7 @@ from django.db import models
 
 from reviews.validators import score_validator, year_validator
 from users.models import User
-
-SCORE_CHOICES = (
-    (1, '1. Неудовлетворительно'),
-    (2, '2. Почти неудовлетворительно'),
-    (3, '3. Удовлетворительно'),
-    (4, '4. Весьма удовлетворительно'),
-    (5, '5. Почти хорошо'),
-    (6, '6. Хорошо'),
-    (7, '7. Очень хорошо'),
-    (8, '8. Почти отлично'),
-    (9, '9. Отлично'),
-    (10, '10. Превосходно'),)
+from api_yamdb.config import SCORE_CHOICES
 
 
 class Category(models.Model):

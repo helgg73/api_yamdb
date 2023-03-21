@@ -3,12 +3,12 @@ from rest_framework import permissions
 
 def admin_permissions(user):
     """Пользователь админ или суперюзер"""
-    return (user.is_admin or user.is_superuser is True)
+    return (user.is_admin)
 
 
 def staff_permissions(user):
     """Пользователь админ, модератор или суперюзер"""
-    return (user.is_admin or user.is_moderator or user.is_superuser is True)
+    return (user.is_admin or user.is_moderator)
 
 
 class AdminOnly(permissions.BasePermission):

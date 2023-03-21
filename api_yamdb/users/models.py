@@ -1,38 +1,37 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from users.validators import username_validator
+from api_yamdb.config import (
+    USER, ADMIN, MODERATOR, ROLE_CHOISES, USERNAME_MAX_LENGTH, DEFAULT_ROLE,
+    MAX_LENGTH_ROLE, USER_EMAIL_MAX_LENGTH
+)
+from users.validators import validate_username
 
 
 class User(AbstractUser):
-
-    USER = 'user'
-    ADMIN = 'admin'
-    MODERATOR = 'moderator'
-
-    ROLE_CHOISES = (
-        (ADMIN, 'Администратор'),
-        (USER, 'Аутентифицированный пользователь'),
-        (MODERATOR, 'Модератор'),
-    )
-
     username = models.CharField(
         'Имя пользователя, username',
-        max_length=150,
+        max_length=USERNAME_MAX_LENGTH,
         unique=True,
         help_text='Имя пользователя',
-        validators=(username_validator,),
+        validators=(validate_username,),
         error_messages={
             'unique': 'Имя пользователя занято',
         },
     )
-    email = models.EmailField('Адрес email', unique=True)
+    email = models.EmailField(
+        'Адрес email',
+        max_length=USER_EMAIL_MAX_LENGTH,
+        unique=True)
     bio = models.TextField(
         'Биография',
         blank=True,
     )
-    role = models.CharField('Роль', max_length=20,
-                            choices=ROLE_CHOISES, default='user')
+    role = models.CharField(
+        'Роль',
+        max_length=MAX_LENGTH_ROLE,
+        choices=ROLE_CHOISES, default=DEFAULT_ROLE
+        )
 
     class Meta:
         ordering = ('role',)
@@ -41,12 +40,13 @@ class User(AbstractUser):
 
     @property
     def is_moderator(self):
-        return self.role == User.MODERATOR
+        return self.role == MODERATOR
 
     @property
     def is_admin(self):
-        return self.role == User.ADMIN
+        return (
+            self.role == ADMIN or self.is_superuser or self.is_staff
+        )
 
-    @property
-    def is_user(self):
-        return self.role == User.USER
+    def __str__(self):
+        return self.username

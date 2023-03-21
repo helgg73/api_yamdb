@@ -1,14 +1,17 @@
 from datetime import datetime
 from rest_framework.exceptions import ValidationError
 
+from api_yamdb.config import MIN_SCORE, MAX_SCORE
+
 
 def score_validator(value):
-    if value < 1 or value > 10:
-        raise ValidationError('Оценка должна быть от 1 до 10')
+    if value < MIN_SCORE or value > MAX_SCORE:
+        raise ValidationError(f'Оценка должна быть от {MIN_SCORE} до {MAX_SCORE}')
     return value
 
 
 def year_validator(value):
-    if value < 0 or value > datetime.now().year:
-        raise ValidationError('Год должен быть от 0 до текущего')
+    now_year = datetime.now().year
+    if value > now_year:
+        raise ValidationError(f'Год должен быть от 0 до текущего {now_year}')
     return value
