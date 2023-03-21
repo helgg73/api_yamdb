@@ -4,9 +4,9 @@ from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, status, viewsets, permissions
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
@@ -92,7 +92,7 @@ class TitleViewSet(ModelViewSet):
     filterset_class = TitlesFilter
 
     def get_serializer_class(self):
-        if self.request.method in permissions.SAFE_METHODS:
+        if self.request.method in SAFE_METHODS:
             return ReadOnlyTitleSerializer
         return TitlesSerializer
 
