@@ -45,11 +45,6 @@ def signup(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-def get_tokens_for_user(user):
-    access_token = AccessToken.for_user(user)
-    return access_token
-
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def checktoken(request, *args, **kwargs):
@@ -59,7 +54,7 @@ def checktoken(request, *args, **kwargs):
     confirmation_code = serializer.validated_data.get('confirmation_code')
     user = get_object_or_404(User, username=username)
     if default_token_generator.check_token(user, confirmation_code):
-        message = f'{get_tokens_for_user(user)}'
+        message = f'{AccessToken.for_user(user)}'
         return Response(message, status=status.HTTP_200_OK)
     return Response('Не верный код подтверждения',
                     status=status.HTTP_400_BAD_REQUEST)
