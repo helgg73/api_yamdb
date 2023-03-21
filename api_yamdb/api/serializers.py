@@ -7,15 +7,14 @@ from users.models import User
 from users.validators import validate_username
 
 
-class SignupSerializer(serializers.ModelSerializer):
+class SignupSerializer(serializers.Serializer):
     username = serializers.CharField(
         max_length=150,
-        required=True,
         validators=(validate_username,),
     )
     email = serializers.EmailField(
         max_length=254,
-        allow_blank=False)
+    )
 
     class Meta:
         model = User
@@ -23,8 +22,25 @@ class SignupSerializer(serializers.ModelSerializer):
             'username', 'email'
         )
 
+    def validate(self, data):
+        if User.objects.filter(
+                email=data['email']
+        ).exists() and not User.objects.filter(
+                username=data['username']).exists():
+            raise serializers.ValidationError(
+                'Такой email уже зарегистрировано с другим именем пользователя'
+            )
+        if not User.objects.filter(
+                email=data['email']
+        ).exists() and User.objects.filter(
+                username=data['username']).exists():
+            raise serializers.ValidationError(
+                'Такое имя пользователя уже зарегистрировано с другим email'
+            )
+        return data
 
-class TokenSerializer(serializers.ModelSerializer):
+
+class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(
         max_length=150,
         required=True

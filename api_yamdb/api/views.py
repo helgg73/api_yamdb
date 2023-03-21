@@ -1,6 +1,5 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -26,14 +25,9 @@ from .serializers import (CategorySerializer, CommentSerializer,
 def signup(request):
     serializer = SignupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    try:
-        user, _ = User.objects.get_or_create(**serializer.validated_data)
-    except IntegrityError:
-        return Response('Неверное сочетание имени и email',
-                        status.HTTP_400_BAD_REQUEST)
+    user, _ = User.objects.get_or_create(**serializer.validated_data)
     confirmation_code = default_token_generator.make_token(user)
     email = user.email
-    print(confirmation_code)
     send_mail(
         'Подтверждение регистрации api_yamdb',
         f'Для подтверждение регистрации отправьте {confirmation_code}',
@@ -42,11 +36,6 @@ def signup(request):
         fail_silently=False,
     )
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-def get_tokens_for_user(user):
-    access_token = AccessToken.for_user(user)
-    return access_token
 
 
 @api_view(['POST'])
@@ -58,7 +47,7 @@ def checktoken(request, *args, **kwargs):
     confirmation_code = serializer.validated_data.get('confirmation_code')
     user = get_object_or_404(User, username=username)
     if default_token_generator.check_token(user, confirmation_code):
-        message = f'{get_tokens_for_user(user)}'
+        message = f'{AccessToken.for_user(user)}'
         return Response(message, status=status.HTTP_200_OK)
     return Response('Не верный код подтверждения',
                     status=status.HTTP_400_BAD_REQUEST)
