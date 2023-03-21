@@ -18,17 +18,13 @@ DEFAULT_ROLE = USER
 USERNAME_MAX_LENGTH = 150
 USER_EMAIL_MAX_LENGTH = 254
 
+# Параметры произведений
+
+MAX_LENGTH_TITLE_SUBSECTION_NAME = 256
+MAX_LENGTH_TITLE_SUBSECTION_SLUG = 50
+MAX_LENGTH_TITLE_NAME = 256
+
 # Параметры отзывов
-SCORE_CHOICES = (
-    (1, '1. Неудовлетворительно'),
-    (2, '2. Почти неудовлетворительно'),
-    (3, '3. Удовлетворительно'),
-    (4, '4. Весьма удовлетворительно'),
-    (5, '5. Почти хорошо'),
-    (6, '6. Хорошо'),
-    (7, '7. Очень хорошо'),
-    (8, '8. Почти отлично'),
-    (9, '9. Отлично'),
-    (10, '10. Превосходно'),)
 MIN_SCORE = 1
-MAX_SCORE = len(SCORE_CHOICES)
+MAX_SCORE = 10
+ERROR_SCORE_MESSAGE = f'Оценка должна быть от {MIN_SCORE} до {MAX_SCORE}'
