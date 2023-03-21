@@ -128,3 +128,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = BASE_DIR.joinpath('sent_emails')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DEFAULT_PROJECT_EMAIL = 'api_yamdb@api_yamdb.com'
