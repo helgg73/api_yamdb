@@ -101,12 +101,15 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         request = self.context['request']
-        if request.method == 'POST':
-            author = request.user
-            title_id = self.context['view'].kwargs.get('title_id')
-            title = get_object_or_404(Title, pk=title_id)
-            if Review.objects.filter(title=title, author=author).exists():
-                raise ValidationError('На произведение разрешен один отзыв')
+        if request.method != 'POST':
+            return data
+        author = request.user
+        title = get_object_or_404(
+            Title,
+            pk=self.context['view'].kwargs.get('title_id')
+        )
+        if Review.objects.filter(title=title, author=author).exists():
+            raise ValidationError('На произведение разрешен один отзыв')
         return data
 
 
