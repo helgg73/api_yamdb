@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
-from api_yamdb import config
+from api_yamdb.config import DEFAULT_PROJECT_EMAIL
 from reviews.models import Category, Genre, Review, Title, User
 from .filters import TitlesFilter
 from .permissions import AdminOnly, AdminOrReadOnly, IsAuthorOrStaffOrReadOnly
@@ -24,6 +24,7 @@ from .serializers import (CategorySerializer, CommentSerializer,
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signup(request):
+    """Создает пользователя и отпраляет код подтверждения"""
     serializer = SignupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     try:
@@ -34,11 +35,10 @@ def signup(request):
         )
     confirmation_code = default_token_generator.make_token(user)
     email = user.email
-    print(confirmation_code)
     send_mail(
         'Подтверждение регистрации на api_yamdb',
         f'Для подтверждение регистрации отправьте {confirmation_code}',
-        f'{config.DEFAULT_PROJECT_EMAIL}',
+        f'{DEFAULT_PROJECT_EMAIL}',
         [f'{email}'],
         fail_silently=False,
     )
@@ -48,6 +48,7 @@ def signup(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def check_confirmation_code(request):
+    """Отдает токен"""
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     username = serializer.validated_data.get('username')
@@ -62,24 +63,24 @@ def check_confirmation_code(request):
     }
     return Response(message, status=status.HTTP_200_OK)
 
-    # return Response('Не верный код подтверждения',
-    #                 status=status.HTTP_400_BAD_REQUEST)
 
-
-class Cat_GenryViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
-                       mixins.CreateModelMixin, viewsets.GenericViewSet):
+class TitleSubsectionViewSet(
+    mixins.DestroyModelMixin, mixins.ListModelMixin,
+    mixins.CreateModelMixin, viewsets.GenericViewSet
+):
+    """Родительский класс для вьюсетов категорий и жанров"""
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
 
 
-class CategoryViewSet(Cat_GenryViewSet):
+class CategoryViewSet(TitleSubsectionViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class GenreViewSet(Cat_GenryViewSet):
+class GenreViewSet(TitleSubsectionViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
