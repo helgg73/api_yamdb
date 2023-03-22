@@ -19,8 +19,8 @@ router.register(
 )
 
 auth_path = [
-    path('auth/signup/', signup, name='signups'),
-    path('auth/token/', check_confirmation_code, name='checktokens')
+    path('auth/signup/', signup, name='signup'),
+    path('auth/token/', check_confirmation_code, name='check_confirmation_code')
 
 ]
 

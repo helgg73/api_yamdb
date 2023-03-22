@@ -17,11 +17,6 @@ class SignupSerializer(serializers.Serializer):
         max_length=254,
     )
 
-    class Meta:
-        fields = (
-            'username', 'email'
-        )
-
 
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(
