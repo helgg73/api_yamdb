@@ -6,16 +6,16 @@ from .views import (CategoryViewSet, CommentViewSet, GenreViewSet,
                     check_confirmation_code, signup)
 
 router = routers.DefaultRouter()
-router.register(r'categories', CategoryViewSet, basename='category')
-router.register(r'genres', GenreViewSet, basename='genre')
-router.register(r'users', UserViewSet, basename='user')
-router.register(r'titles', TitleViewSet, basename='title')
+router.register('categories', CategoryViewSet, basename='categorys')
+router.register('genres', GenreViewSet, basename='genres')
+router.register('users', UserViewSet, basename='users')
+router.register('titles', TitleViewSet, basename='titles')
 router.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='reviews')
 router.register(
     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
     CommentViewSet,
-    basename='comment',
+    basename='comments',
 )
 
 auth_path = [
