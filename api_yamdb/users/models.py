@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from api_yamdb.config import (
-    USER, ADMIN, MODERATOR, ROLE_CHOISES, USERNAME_MAX_LENGTH, DEFAULT_ROLE,
+    ADMIN, MODERATOR, ROLE_CHOISES, USERNAME_MAX_LENGTH, DEFAULT_ROLE,
     MAX_LENGTH_ROLE, USER_EMAIL_MAX_LENGTH
 )
 from users.validators import validate_username
@@ -31,7 +31,7 @@ class User(AbstractUser):
         'Роль',
         max_length=MAX_LENGTH_ROLE,
         choices=ROLE_CHOISES, default=DEFAULT_ROLE
-        )
+    )
 
     class Meta:
         ordering = ('role',)

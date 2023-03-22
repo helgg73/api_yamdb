@@ -25,7 +25,7 @@ class TitleSubsection(models.Model):
         verbose_name_plural = 'Категории'
         ordering = ('name',)
         abstract = True
-    
+
     def __str__(self):
         return self.name
 
@@ -71,7 +71,7 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
         ordering = ('name',)
-    
+
     def __str__(self):
         return self.name
 
@@ -97,13 +97,14 @@ class UserContent(models.Model):
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
         auto_now_add=True)
-    
+
     class Meta:
         ordering = ('pub_date',)
         abstract = True
-    
+
     def __str__(self):
         return self.name[:50]
+
 
 class Review(UserContent):
     title = models.ForeignKey(
@@ -112,7 +113,7 @@ class Review(UserContent):
         on_delete=models.CASCADE)
     score = models.SmallIntegerField(
         'Оценка произведения',
-        validators=( 
+        validators=(
             MaxValueValidator(MAX_SCORE, message=ERROR_SCORE_MESSAGE),
             MinValueValidator(MIN_SCORE, message=ERROR_SCORE_MESSAGE))
     )
