@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
-from api_yamdb import settings
+from api_yamdb import config
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
 from .filters import TitlesFilter
@@ -39,7 +39,7 @@ def signup(request):
     send_mail(
         'Подтверждение регистрации на api_yamdb',
         f'Для подтверждение регистрации отправьте {confirmation_code}',
-        'api_yamdb@api_yamdb.com',
+        f'{config.DEFAULT_PROJECT_EMAIL}',
         [f'{email}'],
         fail_silently=False,
     )
@@ -48,7 +48,7 @@ def signup(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def checktoken(request):
+def check_confirmation_code(request):
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     username = serializer.validated_data.get('username')

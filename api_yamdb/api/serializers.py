@@ -1,9 +1,8 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-from reviews.models import Category, Comment, Genre, Review, Title
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
-from users.models import User
 from users.validators import validate_username
 
 
@@ -17,7 +16,6 @@ class SignupSerializer(serializers.Serializer):
     )
 
     class Meta:
-        model = User
         fields = (
             'username', 'email'
         )
