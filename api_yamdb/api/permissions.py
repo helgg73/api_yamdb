@@ -1,29 +1,12 @@
 from rest_framework import permissions
 
 
-def admin_permissions(user):
-    """Пользователь админ или суперюзер"""
-    return (user.is_admin)
-
-
-def staff_permissions(user):
-    """Пользователь админ, модератор или суперюзер"""
-    return (user.is_admin or user.is_moderator)
-
-
 class AdminOnly(permissions.BasePermission):
     """Доступ для админов и суперпользователя"""
     message = 'Отказано в доступе'
 
     def has_permission(self, request, view):
-        if request.user.is_authenticated:
-            return admin_permissions(request.user)
-        return False
-
-    def has_object_permission(self, request, view, obj):
-        if request.user.is_authenticated:
-            return admin_permissions(request.user)
-        return False
+        return request.user.is_authenticated and request.user.is_admin
 
 
 class AdminOrReadOnly(permissions.BasePermission):
@@ -33,22 +16,7 @@ class AdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
-        if request.user.is_authenticated:
-            return admin_permissions(request.user)
-        return False
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return admin_permissions(request.user)
-
-
-class OnlyOwnAccount(permissions.BasePermission):
-    message = 'Отказано в доступе'
-
-    """Доступ на изменение собственных объектов"""
-    def has_object_permission(self, request, view, obj):
-        return obj.user == request.user
+        return request.user.is_authenticated and request.user.is_admin
 
 
 class IsAuthorOrStaffOrReadOnly(permissions.BasePermission):
@@ -64,6 +32,7 @@ class IsAuthorOrStaffOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return (
             request.method in permissions.SAFE_METHODS
-            or staff_permissions(request.user)
+            or request.user.is_admin
+            or request.user.is_moderator
             or obj.author == request.user
         )

@@ -2,8 +2,8 @@ from django.urls import include, path
 from rest_framework import routers
 
 from .views import (CategoryViewSet, CommentViewSet, GenreViewSet,
-                    ReviewViewSet, TitleViewSet, UserViewSet, check_confirmation_code,
-                    signup)
+                    ReviewViewSet, TitleViewSet, UserViewSet,
+                    check_confirmation_code, signup)
 
 router = routers.DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='category')
@@ -20,7 +20,8 @@ router.register(
 
 auth_path = [
     path('auth/signup/', signup, name='signup'),
-    path('auth/token/', check_confirmation_code, name='check_confirmation_code')
+    path('auth/token/', check_confirmation_code,
+         name='check_confirmation_code')
 
 ]
 
