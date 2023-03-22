@@ -54,13 +54,17 @@ def check_confirmation_code(request):
     username = serializer.validated_data.get('username')
     confirmation_code = serializer.validated_data.get('confirmation_code')
     user = get_object_or_404(User, username=username)
-    if default_token_generator.check_token(user, confirmation_code):
-        message = {
-            'access': f'{AccessToken.for_user(user)}',
-        }
-        return Response(message, status=status.HTTP_200_OK)
-    return Response('Не верный код подтверждения',
-                    status=status.HTTP_400_BAD_REQUEST)
+    if not default_token_generator.check_token(user, confirmation_code):
+        raise serializers.ValidationError(
+            'Не верный код подтверждения.'
+        )
+    message = {
+        'access': f'{AccessToken.for_user(user)}',
+    }
+    return Response(message, status=status.HTTP_200_OK)
+
+    # return Response('Не верный код подтверждения',
+    #                 status=status.HTTP_400_BAD_REQUEST)
 
 
 class Cat_GenryViewSet(mixins.DestroyModelMixin, mixins.ListModelMixin,
