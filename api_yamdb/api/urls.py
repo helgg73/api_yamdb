@@ -18,9 +18,13 @@ router.register(
     basename='comment',
 )
 
+auth_path = [
+    path('auth/signup/', signup, name='signups'),
+    path('auth/token/', check_confirmation_code, name='checktokens')
+
+]
 
 urlpatterns = [
     path('v1/', include(router.urls)),
-    path('v1/auth/signup/', signup, name='signups'),
-    path('v1/auth/token/', check_confirmation_code, name='checktokens')
+    path('v1/', include(auth_path)),
 ]
