@@ -19,13 +19,13 @@ router.register(
 )
 
 auth_path = [
-    path('auth/signup/', signup, name='signup'),
-    path('auth/token/', check_confirmation_code,
+    path('signup/', signup, name='signup'),
+    path('token/', check_confirmation_code,
          name='check_confirmation_code')
 
 ]
 
 urlpatterns = [
+    path('v1/auth/', include(auth_path)),
     path('v1/', include(router.urls)),
-    path('v1/', include(auth_path)),
 ]
