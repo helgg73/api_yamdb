@@ -12,8 +12,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api_yamdb import config
-from reviews.models import Category, Genre, Review, Title
-from users.models import User
+from reviews.models import Category, Genre, Review, Title, User
 from .filters import TitlesFilter
 from .permissions import AdminOnly, AdminOrReadOnly, IsAuthorOrStaffOrReadOnly
 from .serializers import (CategorySerializer, CommentSerializer,
