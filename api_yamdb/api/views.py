@@ -1,9 +1,10 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, status, viewsets
+from rest_framework import filters, mixins, status, viewsets, serializers
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated, SAFE_METHODS
 from rest_framework.response import Response
@@ -26,13 +27,19 @@ from .serializers import (CategorySerializer, CommentSerializer,
 def signup(request):
     serializer = SignupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user, _ = User.objects.get_or_create(**serializer.validated_data)
+    try:
+        user, _ = User.objects.get_or_create(**serializer.validated_data)
+    except IntegrityError:
+        raise serializers.ValidationError(
+            'Введены неверные имя пользователя или email.'
+        )
     confirmation_code = default_token_generator.make_token(user)
     email = user.email
+    print(confirmation_code)
     send_mail(
-        'Подтверждение регистрации api_yamdb',
+        'Подтверждение регистрации на api_yamdb',
         f'Для подтверждение регистрации отправьте {confirmation_code}',
-        settings.DEFAULT_PROJECT_EMAIL,
+        'api_yamdb@api_yamdb.com',
         [f'{email}'],
         fail_silently=False,
     )

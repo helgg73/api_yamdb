@@ -22,23 +22,6 @@ class SignupSerializer(serializers.Serializer):
             'username', 'email'
         )
 
-    def validate(self, data):
-        if User.objects.filter(
-                email=data['email']
-        ).exists() and not User.objects.filter(
-                username=data['username']).exists():
-            raise serializers.ValidationError(
-                'Такой email уже зарегистрировано с другим именем пользователя'
-            )
-        if not User.objects.filter(
-                email=data['email']
-        ).exists() and User.objects.filter(
-                username=data['username']).exists():
-            raise serializers.ValidationError(
-                'Такое имя пользователя уже зарегистрировано с другим email'
-            )
-        return data
-
 
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(
