@@ -21,11 +21,8 @@ class SignupSerializer(serializers.Serializer):
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(
         max_length=USERNAME_MAX_LENGTH,
-        required=True
     )
-    confirmation_code = serializers.CharField(
-        required=True
-    )
+    confirmation_code = serializers.CharField()
 
 
 class CategorySerializer(serializers.ModelSerializer):
