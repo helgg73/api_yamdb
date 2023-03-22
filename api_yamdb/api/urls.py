@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 
 from .views import (CategoryViewSet, CommentViewSet, GenreViewSet,
-                    ReviewViewSet, TitleViewSet, UserViewSet, checktoken,
+                    ReviewViewSet, TitleViewSet, UserViewSet, check_confirmation_code,
                     signup)
 
 router = routers.DefaultRouter()
@@ -18,9 +18,13 @@ router.register(
     basename='comment',
 )
 
+auth_path = [
+    path('auth/signup/', signup, name='signup'),
+    path('auth/token/', check_confirmation_code, name='check_confirmation_code')
+
+]
 
 urlpatterns = [
     path('v1/', include(router.urls)),
-    path('v1/auth/signup/', signup, name='signups'),
-    path('v1/auth/token/', checktoken, name='checktokens')
+    path('v1/', include(auth_path)),
 ]

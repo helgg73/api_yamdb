@@ -28,3 +28,5 @@ MAX_LENGTH_TITLE_NAME = 256
 MIN_SCORE = 1
 MAX_SCORE = 10
 ERROR_SCORE_MESSAGE = f'Оценка должна быть от {MIN_SCORE} до {MAX_SCORE}'
+
+DEFAULT_PROJECT_EMAIL = 'api_yamdb@api_yamdb.com'
