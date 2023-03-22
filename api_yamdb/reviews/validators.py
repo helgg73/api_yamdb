@@ -1,14 +1,11 @@
-from datetime import datetime
+from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 
-def score_validator(value):
-    if value < 1 or value > 10:
-        raise ValidationError('Оценка должна быть от 1 до 10')
-    return value
-
-
-def year_validator(value):
-    if value < 0 or value > datetime.now().year:
-        raise ValidationError('Год должен быть от 0 до текущего')
-    return value
+def validate_year(year):
+    now_year = timezone.now().year
+    if year > now_year:
+        raise ValidationError(
+            f'Год должен быть не больше текущего года: {now_year}'
+        )
+    return year

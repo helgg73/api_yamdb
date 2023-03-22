@@ -1,5 +1,10 @@
 # REST API для сервиса YaMDb
 
+Ссылка на страницу автора на Github:
+```
+https://github.com/helgg73/
+```
+
 Проект YaMDb собирает отзывы __пользователей__ на __произведения__. Сами произведения в YaMDb не хранятся.
 
 Произведения делятся на __категории__, такие как «Книги», «Фильмы», «Музыка». Произведению может быть присвоен __жанр__ (например, «Сказка», «Рок» или «Артхаус»). Добавлять произведения, категории и жанры может только администратор.
@@ -82,19 +87,92 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 6) Вы можете импортировать тестовую базу данных из файлов csv:
-
-Импорт пользователей:
 ```
-python manage.py user_import_csv
-```
-Импорт данных Ревью:
-```
-python manage.py reviews_import_csv
+python manage.py import_csv
 ```
 
 7) Запустите проект:
 ```
 python manage.py runserver
+```
+
+### Примеры запросов:
+
+1. Регистрация нового пользователя.
+
+Запрос:
+```
+/auth/signup/
+```
+Тело запроса:
+```
+{
+  "email": "user@example.com",
+  "username": "string"
+}
+```
+
+Ответ:
+```
+{
+  "email": "user@example.com",
+  "username": "string"
+}
+```
+2. Получение JWT-токена.
+
+Запрос:
+```
+/auth/token/
+```
+Тело запроса:
+```
+{
+  "username": "string",
+  "confirmation_code": "string"
+}
+```
+
+Ответ:
+```
+{
+  "token": "string"
+}
+```
+
+3. Получение списка всех произведений.
+
+Запрос:
+```
+/titles/
+```
+
+Ответ:
+```
+{
+  "count": 0,
+  "next": "string",
+  "previous": "string",
+  "results": [
+    {
+      "id": 0,
+      "name": "string",
+      "year": 0,
+      "rating": 0,
+      "description": "string",
+      "genre": [
+        {
+          "name": "string",
+          "slug": "string"
+        }
+      ],
+      "category": {
+        "name": "string",
+        "slug": "string"
+      }
+    }
+  ]
+}
 ```
 __________________________________
 Ваш проект запустился на http://localhost:8000/

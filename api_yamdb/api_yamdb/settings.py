@@ -126,3 +126,5 @@ REST_FRAMEWORK = {
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 # указываем директорию, в которую будут складываться файлы писем
 EMAIL_FILE_PATH = BASE_DIR.joinpath('sent_emails')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
