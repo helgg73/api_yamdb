@@ -21,15 +21,9 @@ class AdminOrReadOnly(permissions.BasePermission):
         )
 
 
-class IsAuthorOrStaffOrReadOnly(permissions.BasePermission):
+class IsAuthorOrStaffOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
     """Доступ к объектам Review и Comment"""
     message = 'Отказано в доступе'
-
-    def has_permission(self, request, view):
-        return (
-            request.method in permissions.SAFE_METHODS
-            or request.user.is_authenticated
-        )
 
     def has_object_permission(self, request, view, obj):
         return (
