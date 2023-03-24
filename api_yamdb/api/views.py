@@ -64,7 +64,7 @@ def check_confirmation_code(request):
     return Response(message, status=status.HTTP_200_OK)
 
 
-class TitleSubsectionViewSet(
+class CategoryGenreBase(
     mixins.DestroyModelMixin, mixins.ListModelMixin,
     mixins.CreateModelMixin, viewsets.GenericViewSet
 ):
@@ -75,12 +75,12 @@ class TitleSubsectionViewSet(
     lookup_field = 'slug'
 
 
-class CategoryViewSet(TitleSubsectionViewSet):
+class CategoryViewSet(CategoryGenreBase):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class GenreViewSet(TitleSubsectionViewSet):
+class GenreViewSet(CategoryGenreBase):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
