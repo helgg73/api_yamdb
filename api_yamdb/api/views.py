@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
-from api_yamdb.config import DEFAULT_PROJECT_EMAIL
+from api_yamdb.settings import DEFAULT_PROJECT_EMAIL
 from reviews.models import Category, Genre, Review, Title, User
 from .filters import TitlesFilter
 from .permissions import AdminOnly, AdminOrReadOnly, IsAuthorOrStaffOrReadOnly
@@ -31,7 +31,7 @@ def signup(request):
         user, _ = User.objects.get_or_create(**serializer.validated_data)
     except IntegrityError:
         raise serializers.ValidationError(
-            'Введены неверные имя пользователя или email.'
+            'Неверное сочетание имени пользователя и email'
         )
     confirmation_code = default_token_generator.make_token(user)
     email = user.email
@@ -59,7 +59,7 @@ def check_confirmation_code(request):
             'Не верный код подтверждения.'
         )
     message = {
-        'access': f'{AccessToken.for_user(user)}',
+        'Bearer': f'{AccessToken.for_user(user)}',
     }
     return Response(message, status=status.HTTP_200_OK)
 

@@ -3,10 +3,10 @@ from django.db import models
 
 from reviews.validators import validate_year
 from users.models import User
-from api_yamdb.config import (
+from api_yamdb.settings import (
     MIN_SCORE, MAX_SCORE, ERROR_SCORE_MESSAGE,
     MAX_LENGTH_TITLE_SUBSECTION_NAME, MAX_LENGTH_TITLE_SUBSECTION_SLUG,
-    MAX_LENGTH_TITLE_NAME
+    MAX_LENGTH_TITLE_NAME, SLICE_TEXT_FOR_STR
 )
 
 
@@ -21,8 +21,6 @@ class TitleSubsection(models.Model):
         unique=True)
 
     class Meta:
-        verbose_name = 'Категория'
-        verbose_name_plural = 'Категории'
         ordering = ('name',)
         abstract = True
 
@@ -31,7 +29,10 @@ class TitleSubsection(models.Model):
 
 
 class Category(TitleSubsection):
-    pass
+
+    class Meta(TitleSubsection.Meta):
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
 
 class Genre(TitleSubsection):
@@ -59,8 +60,7 @@ class Title(models.Model):
         Genre,
         through='GenreTitle',
         through_fields=('title', 'genre'),
-        verbose_name='Жанр',
-        db_index=True)
+        verbose_name='Жанр',)
     year = models.IntegerField(
         verbose_name='Дата выпуска',
         db_index=True,
@@ -89,10 +89,10 @@ class GenreTitle(models.Model):
 
 class UserContent(models.Model):
     text = models.TextField(
-        verbose_name='Текст комментария')
+        verbose_name='Текст')
     author = models.ForeignKey(
         User,
-        verbose_name='Автор отзыва',
+        verbose_name='Автор',
         on_delete=models.CASCADE)
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
@@ -103,7 +103,7 @@ class UserContent(models.Model):
         abstract = True
 
     def __str__(self):
-        return self.text[:50]
+        return self.text[:SLICE_TEXT_FOR_STR]
 
 
 class Review(UserContent):
