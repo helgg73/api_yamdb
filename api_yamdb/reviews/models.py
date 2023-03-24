@@ -3,14 +3,14 @@ from django.db import models
 
 from reviews.validators import validate_year
 from users.models import User
-from api_yamdb.config import (
+from api_yamdb.settings import (
     MIN_SCORE, MAX_SCORE, ERROR_SCORE_MESSAGE,
     MAX_LENGTH_TITLE_SUBSECTION_NAME, MAX_LENGTH_TITLE_SUBSECTION_SLUG,
-    MAX_LENGTH_TITLE_NAME
+    MAX_LENGTH_TITLE_NAME, SLICE_TEXT_FOR_STR
 )
 
 
-class TitleSubsection(models.Model):
+class CaterogyGenreBase(models.Model):
     name = models.CharField(
         verbose_name='Название',
         max_length=MAX_LENGTH_TITLE_SUBSECTION_NAME,
@@ -21,8 +21,6 @@ class TitleSubsection(models.Model):
         unique=True)
 
     class Meta:
-        verbose_name = 'Категория'
-        verbose_name_plural = 'Категории'
         ordering = ('name',)
         abstract = True
 
@@ -30,13 +28,16 @@ class TitleSubsection(models.Model):
         return self.name
 
 
-class Category(TitleSubsection):
-    pass
+class Category(CaterogyGenreBase):
+
+    class Meta(CaterogyGenreBase.Meta):
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
 
-class Genre(TitleSubsection):
+class Genre(CaterogyGenreBase):
 
-    class Meta(TitleSubsection.Meta):
+    class Meta(CaterogyGenreBase.Meta):
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -59,8 +60,7 @@ class Title(models.Model):
         Genre,
         through='GenreTitle',
         through_fields=('title', 'genre'),
-        verbose_name='Жанр',
-        db_index=True)
+        verbose_name='Жанр',)
     year = models.IntegerField(
         verbose_name='Дата выпуска',
         db_index=True,
@@ -87,12 +87,12 @@ class GenreTitle(models.Model):
         on_delete=models.CASCADE)
 
 
-class UserContent(models.Model):
+class ReviewCommentBase(models.Model):
     text = models.TextField(
-        verbose_name='Текст комментария')
+        verbose_name='Текст')
     author = models.ForeignKey(
         User,
-        verbose_name='Автор отзыва',
+        verbose_name='Автор',
         on_delete=models.CASCADE)
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
@@ -103,10 +103,10 @@ class UserContent(models.Model):
         abstract = True
 
     def __str__(self):
-        return self.text[:50]
+        return self.text[:SLICE_TEXT_FOR_STR]
 
 
-class Review(UserContent):
+class Review(ReviewCommentBase):
     title = models.ForeignKey(
         Title,
         verbose_name='Произведение',
@@ -118,7 +118,7 @@ class Review(UserContent):
             MinValueValidator(MIN_SCORE, message=ERROR_SCORE_MESSAGE))
     )
 
-    class Meta(UserContent.Meta):
+    class Meta(ReviewCommentBase.Meta):
         default_related_name = 'reviews'
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
@@ -129,13 +129,13 @@ class Review(UserContent):
         ]
 
 
-class Comment(UserContent):
+class Comment(ReviewCommentBase):
     review = models.ForeignKey(
         Review,
         verbose_name='Отзыв',
         on_delete=models.CASCADE)
 
-    class Meta(UserContent.Meta):
+    class Meta(ReviewCommentBase.Meta):
         default_related_name = 'comments'
         verbose_name = 'Комментрий к отзывы'
         verbose_name_plural = 'Комментарии к отзыву'

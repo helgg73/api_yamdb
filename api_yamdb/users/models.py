@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from api_yamdb.config import (
+from api_yamdb.settings import (
     ADMIN, MODERATOR, ROLE_CHOISES, USERNAME_MAX_LENGTH, DEFAULT_ROLE,
     MAX_LENGTH_ROLE, USER_EMAIL_MAX_LENGTH
 )
@@ -45,7 +45,7 @@ class User(AbstractUser):
     @property
     def is_admin(self):
         return (
-            self.role == ADMIN or self.is_staff
+            self.role == ADMIN or self.is_staff or self.is_superuser
         )
 
     def __str__(self):

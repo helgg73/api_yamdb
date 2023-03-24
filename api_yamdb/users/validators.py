@@ -2,7 +2,7 @@ import re
 
 from rest_framework.exceptions import ValidationError
 
-from api_yamdb.config import USERNAME_BLACKLIST, USERNAME_CHARSET
+from api_yamdb.settings import USERNAME_BLACKLIST, USERNAME_CHARSET
 
 
 def validate_username(username):

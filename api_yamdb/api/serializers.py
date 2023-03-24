@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 
-from api_yamdb.config import USERNAME_MAX_LENGTH, USER_EMAIL_MAX_LENGTH
+from api_yamdb.settings import USERNAME_MAX_LENGTH, USER_EMAIL_MAX_LENGTH
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
 from users.validators import validate_username
@@ -21,6 +21,7 @@ class SignupSerializer(serializers.Serializer):
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(
         max_length=USERNAME_MAX_LENGTH,
+        validators=(validate_username,),
     )
     confirmation_code = serializers.CharField()
 
@@ -78,9 +79,6 @@ class UserSerializer(serializers.ModelSerializer):
             'role',
         )
         model = User
-
-    def validate_username(self, value):
-        return validate_username(value)
 
 
 class UserEditSerializer(UserSerializer):
